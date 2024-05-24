@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang='es-419'>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+    <title>Signa_Lab - #YoSoy132</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet">
+
+    <script src="src/lib/three.js"></script>
+    <!-- <script src="//unpkg.com/three"></script>-->
+    <script src="src/lib/three-spritetext.min.js"></script>
+    <!-- <script src="//unpkg.com/three-spritetext"></script>-->
+    <!-- <script src="src/lib/3d-force-graph.js"></script> -->
+    <script src="//unpkg.com/3d-force-graph"></script>
+    <!-- <script src="src/lib/3d-force-graph.min.js"></script> -->
+    <!-- <script src="src/lib/3d-force-graph-labeled.js"></script> -->
+
+    <script src="src/lib/d3-dispatch.v1.min.js"></script>
+    <!-- <script src="https://d3js.org/d3-dispatch.v1.min.js"></script> -->
+
+    <script src="src/lib/d3-timer.v1.min.js"></script>
+    <!-- <script src="https://d3js.org/d3-timer.v1.min.js"></script> -->
+
+    <script src="src/lib/d3-quadtree.v1.min.js"></script>
+    <!-- <script src="https://d3js.org/d3-quadtree.v1.min.js"></script> -->
+
+    <script src="src/lib/d3-binarytree.min.js"></script>
+    <!-- <script src="https://unpkg.com/d3-binarytree"></script> -->
+
+    <script src="src/lib/d3-octree.min.js"></script>
+    <!-- <script src="https://unpkg.com/d3-octree"></script> -->
+
+    <script src="src/lib/dat.gui.js"></script>
+    <!-- <script src="https://unpkg.com/dat.gui"></script> -->
+
+    <script src="src/lib/d3-force-3d.min.js"></script>
+    <!-- <script src="https://unpkg.com/d3-force-3d"></script> -->
+
+    <style>
+      body {
+        margin: 0;
+        font-family: 'Roboto Mono', monospace;
+        font-weight: lighter;
+        background-color: #000000;
+      }
+
+      #videonet-header {
+        z-index: 2;
+        position: fixed;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        margin: auto;
+        padding: 25px 40px;
+        width: 30%;
+        pointer-events: none;
+      }
+
+      .videonet-title-container {
+        margin-top: 10%;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .videonet-title {
+        color: #38d7d7;
+        background-color: none;
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.25em;
+        letter-spacing: 0.2px;
+        line-height: 1.25em;
+        width: 100%;
+      }
+
+      .videonet-title a {
+        font-weight: bold;
+        text-decoration: none;
+      }
+
+      .videonet-title-button {
+        background-color: rgba(255, 255, 255, 0.8);
+        color: #000011;
+        text-decoration: none;
+        text-align: center;
+        font-size: 0.85em;
+        display: flex;
+        padding: 1.5em 1.5em;
+        align-self: flex-start;
+        width: 94%;
+        flex: 1;
+        font-weight: bold;
+        border-radius: 25px;
+        margin: 0px;
+      }
+
+      .videonet-subtitle {
+        display: inline;
+        font-size: 0.8em;
+        text-align: left;
+        letter-spacing: 2.5px;
+        font-weight: lighter;
+        align-self: flex-start;
+        width: 40%;
+        margin-right: 4em;
+        margin-top: 2em;
+        color: #F5FCFF;
+        flex: 2;
+      }
+
+      .videonet-subtitle a {
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      .videonet-subtitle a:hover {
+        color: #38d7d7;
+      }
+
+      #footer-note {
+        font-family: 'Overpass Mono', monospace;
+        position: fixed;
+        text-align: right;
+        top: 92%;
+        left: 80%;
+        color: rgb(150, 150, 150);
+        font-size: 0.75em;
+      }
+
+      #footer-note a {
+        text-decoration: none;
+      }
+
+      #footer-note a:hover {
+        color: white;
+      }
+
+      #footer-note a:link {
+        color: rgb(150, 150, 150);
+        ;
+      }
+
+      #footer-note a:visited {
+        color: rgb(150, 150, 150);
+        ;
+      }
+
+      #postInfoContainer {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      #postImageContainer {
+        width: 25%;
+        background: rgba(39, 212, 213, 0.5);
+        z-index: 2;
+        position: fixed;
+        height: 200px;
+        max-height: 200px;
+        top: 75%;
+        padding-bottom: 50px;
+        transform-origin: bottom left;
+        display: none;
+
+      }
+
+      #postImage {
+        z-index: 2;
+        height: 150px;
+        max-height: 150px;
+        position: absolute;
+        z-Index: 3;
+        opacity: 1;
+        display: none;
+        padding: 15px 0 0 20px;
+
+      }
+
+      #fixedPostContainer {
+        z-index: 2;
+        position: absolute;
+        height: 280px;
+        max-height: 280px;
+        top: 30%;
+        padding: 25px 40px;
+        transform-origin: bottom left;
+      }
+
+      #fixedPost {
+        z-index: 2;
+        height: 280px;
+        max-height: 280px;
+        position: absolute;
+        z-Index: 3;
+        opacity: 0.7;
+        display: block;
+        display: none;
+      }
+
+      .description {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .graph-info {
+        text-align: left;
+        display: flex;
+        font-size: 0.6em;
+        letter-spacing: 3px;
+        font-weight: lighter;
+        flex-direction: column;
+        margin-top: 1em;
+        color: #F5FCFF;
+        align-items: center;
+        justify-content: flex-start;
+        list-style-type: square;
+        list-style-position: outside;
+      }
+
+      .graph-info li {
+        text-align: left;
+        width: 100%;
+        justify-content: flex-end;
+        flex-direction: column;
+      }
+
+      #videoDescription {
+        margin: 0px;
+        color: white;
+        font-weight: 800;
+        font-style: oblique;
+      }
+
+      #reactionContainer {
+        background: rgba(39, 212, 213, 0.5);
+        display: flex;
+        position: fixed;
+        color: white;
+        justify-content: flex-start;
+        align-items: center;
+        flex-wrap: wrap;
+        /*position: fixed;*/
+        z-index: 5;
+        flex: 1;
+        text-align: left;
+        display: none;
+        left: 25%;
+        top: 75%;
+        padding: 10px 20px 50px 40px;
+      }
+
+      /* #guiContainer {} */
+
+      #nodeLinkCount {
+        font-weight: bold;
+        display: flex;
+        font-size: 1.2em;
+        align-self: baseline;
+      }
+
+      #nodeLinkCount span {
+        font-weight: bold;
+        display: flex;
+        font-size: 1.5em;
+        /* margin-top: 10px; */
+      }
+
+      .reactionColumn {
+        display: flex;
+        color: white;
+        z-index: 5;
+        font-size: 0.9em;
+        font-weight: 800;
+        padding: 0em 0.1em;
+        width: 20%;
+        align-self: flex-start;
+        text-align: left;
+      }
+
+      .downloadDates {
+        /* display: flex; */
+        font-size: 0.8em;
+        font-weight: bold !important;
+        text-align: center !important;
+        letter-spacing: 0.5px;
+        font-weight: lighter;
+        /* align-self: center; */
+        color: white;
+        z-index: 4;
+        line-height: 1.5em;
+        width: 100%;
+        margin: auto;
+        padding: 10px 0 20px 0;
+      }
+
+      .reactCount {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .logo-container {
+        /* display: none; */
+        /* display: flex; */
+        justify-content: flex-start;
+        width: 100%;
+      }
+
+
+      .logo {
+        /* display: none; */
+        z-index: 4;
+        width: 250px;
+        position: fixed;
+        top: 0px;
+        padding: 20px 20px;
+      }
+
+      #zoom-button {
+        /* display: none; */
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        z-index: 20;
+        padding-top: 20px;
+        opacity: 0.50;
+        pointer-events: none;
+      }
+
+      #zoom-button a {
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      #zoom-toggle {
+        display: flex;
+        justify-content: center;
+        color: #000000;
+        font-size: 0.8em;
+        font-weight: bold;
+        text-decoration: none;
+        z-index: 20;
+        padding: 10px;
+        border-radius: 25px;
+        pointer-events: fill !important;
+      }
+
+
+
+      @media only screen and (max-width: 500px) {
+        .logo-container {
+          display: flex;
+          justify-content: center;
+          width: 100%;
+        }
+
+
+        .logo {
+          top: 90%;
+          width: 200px;
+
+        }
+
+        #videonet-header {
+          display: none !important;
+        }
+
+        #reactionContainer {
+          display: none !important;
+        }
+
+        #postImageContainer {
+          background: rgba(39, 212, 213, 0.5);
+          width: 100%;
+          justify-content: center;
+        }
+      }
+
+      @media only screen and (min-width: 500px) and (max-width: 767px) {
+        .logo {
+          width: 200px;
+        }
+
+        #videonet-header {
+          display: none !important;
+        }
+
+        #reactionContainer {
+          display: none !important;
+        }
+
+        #postImageContainer {
+          background: rgba(39, 212, 213, 0.5);
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="zoom-button">
+      <a>
+        <div id="zoom-toggle">Activar zoom</div>
+      </a>
+    </div>
+
+    <div class="logo-container">
+      <img class="logo" src='imgs/SIG_Logo Header_01-noartb-72.png' />
+    </div>
+
+    <div id="videonet-header">
+      <div class="videonet-title-container">
+        <h1 class="videonet-title"> Red de videos relacionados en Youtube <br />a partir de la búsqueda:</h1>
+      </div>
+
+      <p class="videonet-title-button">“COVID-19” por relevancia para audiencias globales y en
+        todos los idiomas
+      </p>
+
+
+      <div class="description">
+        <h3 class="downloadDates">Descarga al 03 de abril de 2020</h3>
+      </div>
+
+
+      <div class="description">
+        <h2 class="videonet-subtitle">
+          Relaciones entre videos de acuerdo al parámetro “related videos” de la <br /> <a
+            href="https://tools.digitalmethods.net/netvizz/youtube/mod_videos_net.php" target="_blank">Youtube Data
+            API</a>.
+        </h2>
+      </div>
+
+
+
+      <div class="graph-info">
+        <li id="nodeLinkCount">
+          <span id="nodeCount">-</span> videos <br /><span id="linkCount">-</span> relaciones <br /><br /><br /><span
+            id="communityCount">-</span>
+          comunidades<br />
+        </li>
+        <!-- <li>
+            Color -> comunidad por modularidad.
+          </li> -->
+      </div>
+    </div>
+
+    <!-- <div id="fixedPostContainer">
+    </div> -->
+
+    <div id="postInfoContainer">
+      <div id="postImageContainer">
+        <iframe id="postImage" src="" frameborder="0"
+          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+
+      <div id="reactionContainer">
+        <p id="videoDescription"></p>
+        <div class="reactCount">
+          <div class="reactionColumn">
+            <p>
+              👁 Vistas </p>
+          </div>
+          <div class="reactionColumn">
+            <p id="viewCount">
+              -</p>
+          </div>
+          <div class="reactionColumn">
+            <p>
+              💬 Comentarios</p>
+          </div>
+          <div class="reactionColumn">
+            <p id="commentCount">
+              -</p>
+          </div>
+          <div class="reactionColumn">
+            <p>
+              👍 Likes </p>
+          </div>
+          <div class="reactionColumn">
+            <p id="likeCount">
+              -</p>
+          </div>
+          <div class="reactionColumn">
+            <p>
+              👎 Dislikes</p>
+          </div>
+          <div class="reactionColumn">
+            <p id="dislikeCount">
+              -</p>
+          </div>
+          <div class="reactionColumn">
+            <p>
+              ⬇ Recomendaciones recibidas </p>
+          </div>
+          <div class="reactionColumn">
+            <p id="inDegree">
+              -</p>
+          </div>
+          <div class="reactionColumn">
+            <p>
+              ⬆ Recomendaciones emitidas</p>
+          </div>
+          <div class="reactionColumn">
+            <p id="outDegree">
+              -</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="3d-graph"></div>
+    <script src="src/3d-force-graphed_yt_covid19-global_01.js"></script>
+  </body>
+
+</html>
